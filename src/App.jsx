@@ -4,11 +4,36 @@ import './App.css'
 const TURN_TIME = 10 // segundos por turno
 
 const FONDOS = [
-  { nombre: 'Playa', emoji: '🏖️', archivo: 'playa.jpg' },
-  { nombre: 'Bosque', emoji: '🌲', archivo: 'bosque.jpg' },
-  { nombre: 'Montañas', emoji: '⛰️', archivo: 'montana.jpg' },
-  { nombre: 'Atardecer', emoji: '🌅', archivo: 'atardecer.jpg' },
-  { nombre: 'Noche', emoji: '🌌', archivo: 'noche.jpg' },
+  {
+    nombre: 'Playa',
+    emoji: '🏖️',
+    degradado: 'linear-gradient(to bottom, #4facfe 0%, #00c6fb 55%, #f6d365 55%, #fda085 100%)',
+    decor: ['🌴', '🐚', '🦀', '☀️', '🌊'],
+  },
+  {
+    nombre: 'Bosque',
+    emoji: '🌲',
+    degradado: 'linear-gradient(to bottom, #134e5e, #71b280)',
+    decor: ['🌲', '🌳', '🍄', '🦉', '🍃'],
+  },
+  {
+    nombre: 'Montañas',
+    emoji: '⛰️',
+    degradado: 'linear-gradient(to bottom, #2c3e50, #4ca1af)',
+    decor: ['⛰️', '🏔️', '🦅', '☁️', '❄️'],
+  },
+  {
+    nombre: 'Atardecer',
+    emoji: '🌅',
+    degradado: 'linear-gradient(to bottom, #ff512f, #f09819, #dd2476)',
+    decor: ['🌅', '🐦', '☁️', '🌴', '✨'],
+  },
+  {
+    nombre: 'Noche',
+    emoji: '🌌',
+    degradado: 'linear-gradient(to bottom, #0f0c29, #302b63, #24243e)',
+    decor: ['🌙', '⭐', '✨', '🦉', '🌠'],
+  },
 ]
 
 function Square({ value, onSquareClick, isWinning }) {
@@ -48,9 +73,9 @@ export default function App() {
   const isDraw = !winner && squares.every((s) => s !== null)
   const gameOver = Boolean(winner) || isDraw
 
-  // Cambia la imagen de fondo cuando eliges otro paisaje
+  // Cambia el degradado de fondo cuando eliges otro tema
   useEffect(() => {
-    document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(/fondos/${fondo.archivo})`
+    document.body.style.backgroundImage = fondo.degradado
   }, [fondo])
 
   // Temporizador: baja 1 segundo cada vez; si llega a 0 pasa el turno
@@ -105,66 +130,87 @@ export default function App() {
   }
 
   return (
-    <div className="game">
-      <h1>Juego del Gato</h1>
-
-      <div className="fondos">
-        {FONDOS.map((f) => (
-          <button
-            key={f.archivo}
-            className={`fondo-btn ${f.archivo === fondo.archivo ? 'activo' : ''}`}
-            onClick={() => setFondo(f)}
-            title={f.nombre}
+    <>
+      {/* Emojis flotando según el tema elegido */}
+      <div className="decor" key={fondo.nombre}>
+        {Array.from({ length: 10 }).map((_, i) => (
+          <span
+            key={i}
+            className="decor-item"
+            style={{
+              left: `${(i * 37 + 8) % 92}%`,
+              top: `${(i * 53 + 5) % 88}%`,
+              fontSize: `${28 + (i % 3) * 14}px`,
+              animationDelay: `${(i % 5) * 0.6}s`,
+              animationDuration: `${5 + (i % 4)}s`,
+            }}
           >
-            {f.emoji}
-          </button>
+            {fondo.decor[i % fondo.decor.length]}
+          </span>
         ))}
       </div>
 
-      <div className="scoreboard">
-        <div className={`score x ${!gameOver && xIsNext ? 'active' : ''}`}>
-          <span className="label">Jugador X</span>
-          <span className="points">{scores.X}</span>
-        </div>
-        <div className="score">
-          <span className="label">Empates</span>
-          <span className="points">{scores.draws}</span>
-        </div>
-        <div className={`score o ${!gameOver && !xIsNext ? 'active' : ''}`}>
-          <span className="label">Jugador O</span>
-          <span className="points">{scores.O}</span>
-        </div>
-      </div>
+      <div className="game">
+        <h1>Juego del Gato</h1>
 
-      <p className="status">{status}</p>
+        <div className="fondos">
+          {FONDOS.map((f) => (
+            <button
+              key={f.nombre}
+              className={`fondo-btn ${f.nombre === fondo.nombre ? 'activo' : ''}`}
+              onClick={() => setFondo(f)}
+              title={f.nombre}
+            >
+              {f.emoji}
+            </button>
+          ))}
+        </div>
 
-      {!gameOver && (
-        <div>
-          <div className="timer-text">⏱ {timeLeft}s</div>
-          <div className="timer-bar">
-            <div
-              className={`timer-fill ${timeLeft <= 3 ? 'danger' : ''}`}
-              style={{ width: `${(timeLeft / TURN_TIME) * 100}%` }}
-            />
+        <div className="scoreboard">
+          <div className={`score x ${!gameOver && xIsNext ? 'active' : ''}`}>
+            <span className="label">Jugador X</span>
+            <span className="points">{scores.X}</span>
+          </div>
+          <div className="score">
+            <span className="label">Empates</span>
+            <span className="points">{scores.draws}</span>
+          </div>
+          <div className={`score o ${!gameOver && !xIsNext ? 'active' : ''}`}>
+            <span className="label">Jugador O</span>
+            <span className="points">{scores.O}</span>
           </div>
         </div>
-      )}
 
-      <div className="board">
-        {squares.map((value, i) => (
-          <Square
-            key={i}
-            value={value}
-            isWinning={winningLine.includes(i)}
-            onSquareClick={() => handleClick(i)}
-          />
-        ))}
-      </div>
+        <p className="status">{status}</p>
 
-      <div className="buttons">
-        <button onClick={newGame}>Nueva partida</button>
-        <button onClick={resetScores}>Reiniciar marcador</button>
+        {!gameOver && (
+          <div>
+            <div className="timer-text">⏱ {timeLeft}s</div>
+            <div className="timer-bar">
+              <div
+                className={`timer-fill ${timeLeft <= 3 ? 'danger' : ''}`}
+                style={{ width: `${(timeLeft / TURN_TIME) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="board">
+          {squares.map((value, i) => (
+            <Square
+              key={i}
+              value={value}
+              isWinning={winningLine.includes(i)}
+              onSquareClick={() => handleClick(i)}
+            />
+          ))}
+        </div>
+
+        <div className="buttons">
+          <button onClick={newGame}>Nueva partida</button>
+          <button onClick={resetScores}>Reiniciar marcador</button>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

@@ -1,4 +1,6 @@
 .game {
+  position: relative;
+  z-index: 1;
   max-width: 420px;
   margin: 0 auto;
   padding: 1rem;
@@ -9,6 +11,34 @@ h1 {
   font-size: 2.4rem;
   margin: 0.5rem 0 1.2rem;
   text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Botones de tema */
+.fondos {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.fondo-btn {
+  width: 46px;
+  height: 46px;
+  font-size: 1.4rem;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fondo-btn:hover {
+  transform: scale(1.1);
+}
+
+.fondo-btn.activo {
+  border-color: white;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Marcador */
@@ -146,29 +176,27 @@ h1 {
 .buttons button:hover {
   background: #f3e8ff;
 }
-.fondos {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 1.2rem;
+
+/* Emojis decorativos */
+.decor {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.fondo-btn {
-  width: 46px;
-  height: 46px;
-  font-size: 1.4rem;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  cursor: pointer;
-  transition: all 0.2s;
+.decor-item {
+  position: absolute;
+  opacity: 0.55;
+  animation: flotar 6s ease-in-out infinite alternate;
 }
 
-.fondo-btn:hover {
-  transform: scale(1.1);
-}
-
-.fondo-btn.activo {
-  border-color: white;
-  background: rgba(255, 255, 255, 0.5);
+@keyframes flotar {
+  from {
+    transform: translateY(0) rotate(-6deg);
+  }
+  to {
+    transform: translateY(-25px) rotate(6deg);
+  }
 }
